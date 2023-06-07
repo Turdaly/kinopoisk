@@ -141,6 +141,23 @@ img {
         <button> Delete Movie </button>
       </a>
 
-
+      <br/><br/>
+      <hr>
+      <h2>Comments...</h2>
+      
+      {% if not movie.comments.all %}
+        No Comments Yet...<a href="{% url 'add_comment' movie.pk %}"> 
+        Add One</a>
+      {% else%}
+      <a href="{% url 'add_comment' movie.pk %}"> Add comment </a>
+      <br/><br/>
+          {% for comment in movie.comments.all %}
+          <strong> {{ comment.name }} - {{ comment.date_added }} </strong>
+          <br/>
+          {{ comment.body }}
+          <br/><br/>
+          <hr>
+        {% endfor %}
+      {% endif %}
 </body>
 </html>

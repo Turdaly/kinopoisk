@@ -3,8 +3,9 @@ from .models import *
 
 # Register your models here.
 admin.site.register(Movie)
+admin.site.register(Comment)
+admin.site.register(Klient)
 
-admin.site.register(Cartoon)
 
-admin.site.register(Top_250)
+
 

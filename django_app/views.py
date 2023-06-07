@@ -8,8 +8,14 @@ from django.views.generic import \
 from .models import *
 from django.urls import reverse_lazy
 from django.shortcuts import render
-from .form import MovieCreationForm
+from django.contrib.auth import authenticate, login, logout 
+from django.contrib.auth.forms import UserCreationForm 
 # Create your views here.
+
+class UserCreateView(CreateView):
+    form_class = UserCreationForm
+    success_url = reverse_lazy('login')
+    template_name = 'registarion.html'
 class MovieListView(ListView):
     model = Movie
     template_name = 'home.html'
@@ -43,43 +49,12 @@ class MovieListView2(ListView):
     context_object_name = 'movies'
     
 
-class CartoonListView(ListView):
-    model = Cartoon
-    template_name = 'cartoon.html'
-    context_object_name = 'cartoons'
-    
-class CartoonDetailView(DetailView):
-    model = Cartoon
-    template_name = 'cartoon_detail.html'
-    context_object_name = 'cartoon'
-    
-class CartoonCreateView(CreateView):
-    model = Cartoon
-    template_name = 'cartoon_create.html'
-    fields = ['name', 'genre', 'country', 'duration', 'description', 'rating', 'manufacturing_date', 'image']
-    
-class CartoonUpdateView(UpdateView):
-    model = Cartoon
-    template_name = 'cartoon_update.html'
-    fields = ['name', 'genre', 'country', 'duration', 'description', 'rating', 'manufacturing_date', 'image']
-    
-    
-class CartoonDeleteView(DeleteView):
-    model = Cartoon
-    template_name = 'cartoon_delete.html'
-    success_url = reverse_lazy('cartoon') 
-    
-
 
 def Top_250View(request):
     movies = Movie.objects.all()
-    cartoons = Cartoon.objects.all()
     top_movies = []
     for movie in movies:
         top_movies.append(movie)
-        
-    for cartoon in cartoons:
-        top_movies.append(cartoon)
                 
         
     top_movies.sort(key=lambda x: -x.rating) # reverse=True
@@ -91,20 +66,12 @@ def Top_250View(request):
     
 def ActionView(request):
     movies = Movie.objects.all()
-    cartoons = Cartoon.objects.all()
     action_movie = []
     
     for movie in movies:       
         if movie.genre.find('боевик') != -1:
             action_movie.append(movie)
      
-            
-        
-    for cartoon in cartoons:
-        if cartoon.genre.find('боевик') != -1:
-            action_movie.append(cartoon)
-    
-            
     return render(request=request, 
                   template_name="action_movie.html",
                   context={
@@ -114,19 +81,12 @@ def ActionView(request):
     
 def ComedyView(request):
     movies = Movie.objects.all()
-    cartoons = Cartoon.objects.all()
     comedy_movie = []
     
     for movie in movies:       
         if movie.genre.find('комедия') != -1:
             comedy_movie.append(movie)
      
-            
-        
-    for cartoon in cartoons:
-        if cartoon.genre.find('комедия') != -1:
-            comedy_movie.append(cartoon)
-                
     
     return render(request=request, 
                   template_name="comedy_movie.html",
@@ -138,19 +98,12 @@ def ComedyView(request):
     
 def ThrillerView(request):
     movies = Movie.objects.all()
-    cartoons = Cartoon.objects.all()
     thriller_movie = []
     
     for movie in movies:       
         if movie.genre.find('триллер') != -1:
             thriller_movie.append(movie)
      
-            
-        
-    for cartoon in cartoons:
-        if cartoon.genre.find('триллер') != -1:
-            thriller_movie.append(cartoon)
-                
     
     return render(request, 
                   template_name="thriller_movie.html",
@@ -158,31 +111,29 @@ def ThrillerView(request):
                       "thriller_movie": thriller_movie,
                   })
     
+def MultfilmView(request):
+    movies = Movie.objects.all()
+    multfilm = []
+    for movie in movies:       
+        if movie.genre.find('мультфильм') != -1:
+            multfilm.append(movie)
+
+    return render(request, 
+                  template_name="multfilm_movie.html",
+                  context={
+                      "multfilm": multfilm,
+                  })
     
-# class SearchResultsView(ListView):
-#     template_name = 'search_results.html'
-#     movies = Movie.objects.all()
-#     cartoons = Cartoon.objects.all()
-#     def get_queryset(self): # новый
-#         query = self.request.GET.get('q')
-#         search_movie = Movie.objects.filter(
-#             Q(name__icontains=query)
-#         )
-#         return search_movie
-    
+
     
 def SearchResultsView(request):
     movies = Movie.objects.all()
-    cartoons = Cartoon.objects.all()
     search_results = []
     movie_cartoon = []
     query = request.GET.get('q')
     for movie in movies:
         movie_cartoon.append(movie)
-         
-    for cartoon in cartoons:
-        movie_cartoon.append(cartoon)
-             
+
     for movie in movie_cartoon:
         if str(movie.name).find(query) != -1:    
             search_results.append(movie)
@@ -204,14 +155,21 @@ def SearchResultsView(request):
     return render(request,
                   template_name='notfound.html')
 
+
 def ProfileView(request):
+    klient = Klient.objects.get(name=request.user)
     return render(request=request, 
             template_name="profile.html",
             context={
-                "user": request.user,
+                "klient": klient
             })
     
     
     
+    
+class AddCommentView(CreateView):
+    model = Comment
+    template_name = 'add_comment.html'
+    fields = '__all__'
     
     

@@ -11,6 +11,7 @@ urlpatterns = [
     path('action_movie/', ActionView, name='action_movie'), 
     path('comedy_movie/', ComedyView, name='comedy_movie'), 
     path('thriller_movie/', ThrillerView, name='thriller_movie'), 
+    path('multfilm_movie/', MultfilmView, name='multfilm_movie'), 
 
     path('movie/new/', MovieCreateView.as_view(), name='movie_create'),      
     path('movie/<int:pk>/update/', MovieUpdateView.as_view(), name='movie_update'),  
@@ -19,12 +20,6 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('', MovieListView.as_view(), name='home'),
     
-    path('cartoon/<int:pk>/', CartoonDetailView.as_view(), name='cartoon_detail'),
-    path('cartoon/new/', CartoonCreateView.as_view(), name='cartoon_create'),  
-    path('cartoon/<int:pk>/update/', CartoonUpdateView.as_view(), name='cartoon_update'),  
-    path('cartoon/<int:pk>/delete/', CartoonDeleteView.as_view(), name='cartoon_delete'),  
-    path('cartoons/', CartoonListView.as_view(), name='cartoon'),
-    
     path('profile/', ProfileView, name='profile'),
-
+    path('movie/<int:pk>/comment', AddCommentView.as_view(), name='add_comment')
 ]
